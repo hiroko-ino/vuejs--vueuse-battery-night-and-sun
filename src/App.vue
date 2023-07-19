@@ -10,6 +10,8 @@ import Cloud1Gd2 from './assets/image/use_battery_cloud_01_gd_02.png'
 import Cloud2Base from './assets/image/use_battery_cloud_02_base.png'
 import Cloud2Gd1 from './assets/image/use_battery_cloud_02_gd_01.png'
 import Cloud2Gd2 from './assets/image/use_battery_cloud_02_gd_02.png'
+import Kuki from './assets/image/use_battery_kuki.png'
+import Flower from './assets/image/use_battery_flower.png'
 
 const battery = reactive(useBattery())
 
@@ -92,18 +94,21 @@ const gdBottomColor = computed(() => getGdBottomColor(battery.level * 100))
       <div class="gd-bottom3" :style="{ backgroundColor: gdBottomColor, opacity: 0.2 }"></div>
       <div class="gd-bottom4" :style="{ backgroundColor: gdBottomColor, opacity: 0.2 }"></div>
       <img class="image__base" :src="ImageBase" alt="">
-      <img :src="Sun" alt="" :style="{ position: 'absolute', top: `calc(4% + ${100 - battery.level * 100} * 3px)`, right: '10%' }">
-      <img :src="Moon" alt="" :style="{ position: 'absolute', top: `calc(58% - ${100 - battery.level * 100} * 2.6px)`, right: '10%', }">
-      <div class="cloud" :style="{ position: 'absolute', top: '5%', left: '7%', }">
+      <img class="sun" :src="Sun" alt="" :style="{ position: 'absolute', top: `calc(4% + ${100 - battery.level * 100} * 3px)`, right: '10%' }">
+      <img class="moon" :src="Moon" alt="" :style="{ position: 'absolute', top: `calc(58% - ${100 - battery.level * 100} * 2.6px)`, right: '10%', }">
+      <div class="cloud cloud--1" :style="{ position: 'absolute', top: '5%', left: '6%', }">
         <img class="cloud__base" :src="Cloud1Base" alt="">
         <img class="cloud__gd1" :src="Cloud1Gd1" alt="">
         <img class="cloud__gd2" :src="Cloud1Gd2" alt="">
       </div>
-      <div class="cloud" :style="{ position: 'absolute', top: '24%', left: '25%', }">
+      <div class="cloud cloud--2" :style="{ position: 'absolute', top: '24%', left: '25%', }">
         <img class="cloud__base" :src="Cloud2Base" alt="">
         <img class="cloud__gd1" :src="Cloud2Gd1" alt="">
         <img class="cloud__gd2" :src="Cloud2Gd2" alt="">
       </div>
+      <img class="flower flower--1" :src="Flower" alt="">
+      <img class="flower flower--2" :src="Flower" alt="">
+      <img class="kuki" :src="Kuki" alt="">
     </div>
   </div>
   <div class="info">
@@ -115,30 +120,97 @@ const gdBottomColor = computed(() => getGdBottomColor(battery.level * 100))
 </template>
 
 <style scoped>
+@keyframes cloudAnime1 {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  30% {
+    transform: translateX(-7px) translateY(-5px);
+  }
+  60% {
+    transform: translateX(5px) translateY(-7px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes cloudAnime2 {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  30% {
+    transform: translateX(-12px) translateY(-7px);
+  }
+  60% {
+    transform: translateX(3px) translateY(-5px);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes flower1 {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  30% {
+    transform: translateX(-3px) translateY(-2px) rotate(-4deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}
+
+@keyframes flower2 {
+  0% {
+    transform: translateX(0) translateY(0);
+  }
+  30% {
+    transform: translateX(-3px) translateY(-2px) rotate(-8deg);
+  }
+  100% {
+    transform: translateX(0) translateY(0);
+  }
+}
 .wrapper {
   text-align: center;
-  padding-top: 20px;
+  padding-top: 0;
 }
 .image {
-  display: inline-block;
+  margin-inline: auto;
   position: relative;
-  height: 500px;
   overflow: hidden;
+  width: 100%;
 }
 
 .image__base {
   position: relative;
   z-index: 10;
+  width: 100%;
+  vertical-align: top;
 }
 
 .cloud {
   position: relative;
 }
 
+.cloud--1 {
+  width: 21vw;
+  animation: cloudAnime1 11s infinite;
+}
+
+.cloud--2 {
+  width: 10vw;
+  animation: cloudAnime2 11s infinite;
+}
+
 .cloud__base, .cloud__gd1, .cloud__gd2 {
   position: absolute;
   top: 0;
   left: 0;
+  width: 100%;
+  height: auto;
 }
 
 .gd-bottom1 {
@@ -200,6 +272,44 @@ const gdBottomColor = computed(() => getGdBottomColor(battery.level * 100))
 .info {
   text-align: center;
   font-family: 'DotGothic16', sans-serif;
+}
+
+.sun {
+  width: 10vw;
+  height: auto;
+}
+
+.moon {
+  width: 6.7vw;
+  height: auto;
+}
+
+.flower {
+  position: absolute;
+  width: 12vw;
+  height: auto;
+  z-index: 20;
+}
+
+.flower--1 {
+  left: 3%;
+  bottom: 5%;
+  animation: flower1 infinite 4s;
+}
+
+.flower--2 {
+  left: 7%;
+  bottom: -5%;
+  animation: flower2 infinite 4s;
+}
+
+.kuki {
+  position: absolute;
+  width: 10vw;
+  bottom: 0;
+  left: 0;
+  height: auto;
+  z-index: 15;
 }
 
 </style>
