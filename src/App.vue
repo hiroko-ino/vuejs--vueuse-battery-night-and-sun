@@ -48,31 +48,31 @@ const interpolateColor = (color1: string, color2: string, ratio: number) => {
 }
 
 const getSkyColor = (value: number) => {
-  if (value <= 30) {
-    const ratio = value / 30;
+  if (value <= 40) {
+    const ratio = value / 40;
     return interpolateColor('#746c88', '#ff974e', ratio);
   } else {
-    const ratio = (value - 30) / 70;
+    const ratio = (value - 40) / 60;
     return interpolateColor('#ff974e', '#30a4f2', ratio);
   }
 };
 
 const getGdTopColor = (value: number) => {
-  if (value <= 30) {
-    const ratio = value / 30;
+  if (value <= 40) {
+    const ratio = value / 40;
     return interpolateColor('#241b39', '#996971', ratio);
   } else {
-    const ratio = (value - 30) / 70;
+    const ratio = (value - 40) / 60;
     return interpolateColor('#996971', '#1687d3', ratio);
   }
 }
 
 const getGdBottomColor = (value: number) => {
-  if (value <= 30) {
-    const ratio = value / 30;
+  if (value <= 40) {
+    const ratio = value / 40;
     return interpolateColor('#c7b5c0', '#ffe142', ratio);
   } else {
-    const ratio = (value - 30) / 70;
+    const ratio = (value - 40) / 60;
     return interpolateColor('#ffe142', '#a2d0ee', ratio);
   }
 }
@@ -97,8 +97,8 @@ const gdBottomColor = computed(() => getGdBottomColor(batteryLevel))
       <div class="gd-bottom3" :style="{ backgroundColor: gdBottomColor, opacity: 0.2 }"></div>
       <div class="gd-bottom4" :style="{ backgroundColor: gdBottomColor, opacity: 0.2 }"></div>
       <img class="image__base" :src="ImageBase" alt="">
-      <img class="sun" :src="Sun" alt="" :style="{ position: 'absolute', top: `calc(4% + ${100 - batteryLevel * 100} * 3px)`, right: '10%' }">
-      <img class="moon" :src="Moon" alt="" :style="{ position: 'absolute', top: `calc(58% - ${100 - batteryLevel * 100} * 2.6px)`, right: '10%', }">
+      <img class="sun" :src="Sun" alt="" :style="{ position: 'absolute', top: `calc(4% + ${100 - batteryLevel} * 0.55%)`, right: '10%' }">
+      <img class="moon" :src="Moon" alt="" :style="{ position: 'absolute', top: `calc(58% - ${100 - batteryLevel} * 0.55%)`, right: '10%', }">
       <div class="cloud cloud--1" :style="{ position: 'absolute', top: '5%', left: '6%', }">
         <img class="cloud__base" :src="Cloud1Base" alt="">
         <img class="cloud__gd1" :src="Cloud1Gd1" alt="">
