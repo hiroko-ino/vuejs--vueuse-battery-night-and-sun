@@ -77,11 +77,11 @@ const getGdBottomColor = (value: number) => {
   }
 }
 
-const batteryLevel = battery.level * 100
+const batteryLevel = computed(() => battery.level * 100)
 
-const baseColor = computed(() => getSkyColor(batteryLevel))
-const gdTopColor = computed(() => getGdTopColor(batteryLevel))
-const gdBottomColor = computed(() => getGdBottomColor(batteryLevel))
+const baseColor = computed(() => getSkyColor(batteryLevel.value))
+const gdTopColor = computed(() => getGdTopColor(batteryLevel.value))
+const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
 
 </script>
 
