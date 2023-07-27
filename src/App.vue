@@ -126,7 +126,10 @@ const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
       </div>
     </div>
   </div>
-  <div class="info">
+  <div v-if="!battery.isSupported" class="info">
+    お使いのブラウザではAPIがサポートされていません
+  </div>
+  <div v-else class="info">
     Charging: {{ battery.charging }}<br>
     Battery label: {{ battery.level }}<br>
     Charging Time:  {{ battery.chargingTime }}<br>
