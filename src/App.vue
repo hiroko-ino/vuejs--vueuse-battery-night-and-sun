@@ -23,66 +23,59 @@ import Battery from './assets/image/use_battery_battery.png'
 
 const battery = reactive(useBattery())
 
+// 1500ミリ秒ごとにカウントアップ
 const counter = useInterval(1500)
 
 const interpolateColor = (color1: string, color2: string, ratio: number) => {
   // カラーコードを16進数からRGBに変換
-  const r1 = parseInt(color1.substring(1, 3), 16);
-  const g1 = parseInt(color1.substring(3, 5), 16);
-  const b1 = parseInt(color1.substring(5, 7), 16);
+  const r1 = parseInt(color1.substring(1, 3), 16)
+  const g1 = parseInt(color1.substring(3, 5), 16)
+  const b1 = parseInt(color1.substring(5, 7), 16)
 
-  const r2 = parseInt(color2.substring(1, 3), 16);
-  const g2 = parseInt(color2.substring(3, 5), 16);
-  const b2 = parseInt(color2.substring(5, 7), 16);
+  const r2 = parseInt(color2.substring(1, 3), 16)
+  const g2 = parseInt(color2.substring(3, 5), 16)
+  const b2 = parseInt(color2.substring(5, 7), 16)
 
   // ratioに基づいてカラーコードを補間
-  const r = Math.round(r1 + (r2 - r1) * ratio);
-  const g = Math.round(g1 + (g2 - g1) * ratio);
-  const b = Math.round(b1 + (b2 - b1) * ratio);
+  const r = Math.round(r1 + (r2 - r1) * ratio)
+  const g = Math.round(g1 + (g2 - g1) * ratio)
+  const b = Math.round(b1 + (b2 - b1) * ratio)
 
   // RGBを16進数に変換してカラーコードを返す
-  const hexR = r.toString(16).padStart(2, '0');
-  const hexG = g.toString(16).padStart(2, '0');
-  const hexB = b.toString(16).padStart(2, '0');
-  return `#${hexR}${hexG}${hexB}`;
+  const hexR = r.toString(16).padStart(2, '0')
+  const hexG = g.toString(16).padStart(2, '0')
+  const hexB = b.toString(16).padStart(2, '0')
+  return `#${hexR}${hexG}${hexB}`
 }
 
-const getSkyColor = (value: number) => {
-  if (value <= 40) {
-    const ratio = value / 40;
-    return interpolateColor('#746c88', '#ff974e', ratio);
+// 色を取得する
+const getColor = (
+  batteryLevel: number,
+  boundary: number,
+  fromColor: string,
+  middleColor: string,
+  toColor: string
+) => {
+  if (batteryLevel <= boundary) {
+    const ratio = batteryLevel / boundary
+    return interpolateColor(toColor, middleColor, ratio)
   } else {
-    const ratio = (value - 40) / 60;
-    return interpolateColor('#ff974e', '#30a4f2', ratio);
-  }
-};
-
-const getGdTopColor = (value: number) => {
-  if (value <= 40) {
-    const ratio = value / 40;
-    return interpolateColor('#241b39', '#996971', ratio);
-  } else {
-    const ratio = (value - 40) / 60;
-    return interpolateColor('#996971', '#1687d3', ratio);
+    const ratio = (batteryLevel - boundary) / (100 - boundary)
+    return interpolateColor(middleColor, fromColor, ratio)
   }
 }
 
-const getGdBottomColor = (value: number) => {
-  if (value <= 40) {
-    const ratio = value / 40;
-    return interpolateColor('#c7b5c0', '#ffe142', ratio);
-  } else {
-    const ratio = (value - 40) / 60;
-    return interpolateColor('#ffe142', '#a2d0ee', ratio);
-  }
-}
-
+// バッテリーレベル
 const batteryLevel = computed(() => battery.level * 100)
 
-const baseColor = computed(() => getSkyColor(batteryLevel.value))
-const gdTopColor = computed(() => getGdTopColor(batteryLevel.value))
-const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
-
+// 空のベースカラー
+const baseColor = computed(() => getColor(batteryLevel.value, 40, '#30a4f2', '#ff974e', '#746c88'))
+// 空のグラデーションの上側
+const gdTopColor = computed(() => getColor(batteryLevel.value, 40, '#1687d3', '#996971', '#241b39'))
+// 空のグラデーションの下側
+const gdBottomColor = computed(() =>
+  getColor(batteryLevel.value, 40, '#a2d0ee', '#ffe142', '#c7b5c0')
+)
 </script>
 
 <template>
@@ -96,33 +89,61 @@ const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
       <div class="gd-bottom2" :style="{ backgroundColor: gdBottomColor, opacity: 0.2 }"></div>
       <div class="gd-bottom3" :style="{ backgroundColor: gdBottomColor, opacity: 0.2 }"></div>
       <div class="gd-bottom4" :style="{ backgroundColor: gdBottomColor, opacity: 0.2 }"></div>
-      <img class="image__base" :src="ImageBase" alt="">
-      <img class="sun" :src="Sun" alt="" :style="{ position: 'absolute', top: `calc(4% + ${100 - batteryLevel} * 0.55%)`, right: '10%' }">
-      <img class="moon" :src="Moon" alt="" :style="{ position: 'absolute', top: `calc(58% - ${100 - batteryLevel} * 0.55%)`, right: '10%', }">
-      <div class="cloud cloud--1" :style="{ position: 'absolute', top: '5%', left: '6%', }">
-        <img class="cloud__base" :src="Cloud1Base" alt="">
-        <img class="cloud__gd1" :src="Cloud1Gd1" alt="">
-        <img class="cloud__gd2" :src="Cloud1Gd2" alt="">
+      <img class="image__base" :src="ImageBase" alt="" />
+      <img
+        class="sun"
+        :src="Sun"
+        alt=""
+        :style="{
+          position: 'absolute',
+          top: `calc(4% + ${100 - batteryLevel} * 0.55%)`,
+          right: '10%'
+        }"
+      />
+      <img
+        class="moon"
+        :src="Moon"
+        alt=""
+        :style="{
+          position: 'absolute',
+          top: `calc(58% - ${100 - batteryLevel} * 0.55%)`,
+          right: '10%'
+        }"
+      />
+      <div class="cloud cloud--1">
+        <img class="cloud__base" :src="Cloud1Base" alt="" />
+        <img class="cloud__gd1" :src="Cloud1Gd1" alt="" />
+        <img class="cloud__gd2" :src="Cloud1Gd2" alt="" />
       </div>
-      <div class="cloud cloud--2" :style="{ position: 'absolute', top: '24%', left: '25%', }">
-        <img class="cloud__base" :src="Cloud2Base" alt="">
-        <img class="cloud__gd1" :src="Cloud2Gd1" alt="">
-        <img class="cloud__gd2" :src="Cloud2Gd2" alt="">
+      <div class="cloud cloud--2">
+        <img class="cloud__base" :src="Cloud2Base" alt="" />
+        <img class="cloud__gd1" :src="Cloud2Gd1" alt="" />
+        <img class="cloud__gd2" :src="Cloud2Gd2" alt="" />
       </div>
-      <img class="flower flower--1" :src="Flower" alt="">
-      <img class="flower flower--2" :src="Flower" alt="">
-      <img class="kuki" :src="Kuki" alt="">
+      <img class="flower flower--1" :src="Flower" alt="" />
+      <img class="flower flower--2" :src="Flower" alt="" />
+      <img class="kuki" :src="Kuki" alt="" />
       <div class="dog">
         <div class="dog__pc">
-          <img v-show="(counter % 2) === 0 && battery.charging" class="dog__ereki" :src="Ereki1" alt="">
-          <img v-show="(counter % 2) !== 0 && battery.charging" class="dog__ereki" :src="Ereki2" alt="">
-          <img v-show="battery.charging" class="dog__battery" :src="Battery">
-          <img v-show="(counter % 2) === 0" class="dog__mac" :src="Pc1" alt="">
-          <img v-show="(counter % 2) !== 0" class="dog__mac" :src="Pc2" alt="">
+          <img
+            v-show="counter % 2 === 0 && battery.charging"
+            class="dog__ereki"
+            :src="Ereki1"
+            alt=""
+          />
+          <img
+            v-show="counter % 2 !== 0 && battery.charging"
+            class="dog__ereki"
+            :src="Ereki2"
+            alt=""
+          />
+          <img v-show="battery.charging" class="dog__battery" :src="Battery" />
+          <img v-show="counter % 2 === 0" class="dog__mac" :src="Pc1" alt="" />
+          <img v-show="counter % 2 !== 0" class="dog__mac" :src="Pc2" alt="" />
         </div>
-        <img class="dog__base" :src="DogBase" alt="">
-        <img v-show="(counter % 2) === 0" class="dog__tail dog__tail--1" :src="DogTail1" alt="">
-        <img v-show="(counter % 2) !== 0" class="dog__tail dog__tail--2" :src="DogTail2" alt="">
+        <img class="dog__base" :src="DogBase" alt="" />
+        <img v-show="counter % 2 === 0" class="dog__tail dog__tail--1" :src="DogTail1" alt="" />
+        <img v-show="counter % 2 !== 0" class="dog__tail dog__tail--2" :src="DogTail2" alt="" />
       </div>
     </div>
   </div>
@@ -130,9 +151,9 @@ const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
     お使いのブラウザではAPIがサポートされていません
   </div>
   <div v-else class="info">
-    Charging: {{ battery.charging }}<br>
-    Battery label: {{ battery.level }}<br>
-    Charging Time:  {{ battery.chargingTime }}<br>
+    Charging: {{ battery.charging }}<br />
+    Battery label: {{ battery.level }}<br />
+    Charging Time: {{ battery.chargingTime }}<br />
     DischargingTime: {{ battery.dischargingTime }}
   </div>
 </template>
@@ -218,14 +239,22 @@ const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
 .cloud--1 {
   width: 21%;
   animation: cloudAnime1 11s infinite;
+  position: absolute;
+  top: 5%;
+  left: 6%;
 }
 
 .cloud--2 {
   width: 10%;
   animation: cloudAnime2 11s infinite;
+  position: absolute;
+  top: 24%;
+  left: 25%;
 }
 
-.cloud__base, .cloud__gd1, .cloud__gd2 {
+.cloud__base,
+.cloud__gd1,
+.cloud__gd2 {
   position: absolute;
   top: 0;
   left: 0;
