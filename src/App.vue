@@ -23,6 +23,7 @@ import Battery from './assets/image/use_battery_battery.png'
 
 const battery = reactive(useBattery())
 
+// 1500ミリ秒ごとにカウントアップ
 const counter = useInterval(1500)
 
 const interpolateColor = (color1: string, color2: string, ratio: number) => {
@@ -47,41 +48,34 @@ const interpolateColor = (color1: string, color2: string, ratio: number) => {
   return `#${hexR}${hexG}${hexB}`
 }
 
-const getSkyColor = (value: number) => {
-  if (value <= 40) {
-    const ratio = value / 40
-    return interpolateColor('#746c88', '#ff974e', ratio)
+// 色を取得する
+const getColor = (
+  batteryLevel: number,
+  boundary: number,
+  fromColor: string,
+  middleColor: string,
+  toColor: string
+) => {
+  if (batteryLevel <= boundary) {
+    const ratio = batteryLevel / boundary
+    return interpolateColor(toColor, middleColor, ratio)
   } else {
-    const ratio = (value - 40) / 60
-    return interpolateColor('#ff974e', '#30a4f2', ratio)
+    const ratio = (batteryLevel - boundary) / (100 - boundary)
+    return interpolateColor(middleColor, fromColor, ratio)
   }
 }
 
-const getGdTopColor = (value: number) => {
-  if (value <= 40) {
-    const ratio = value / 40
-    return interpolateColor('#241b39', '#996971', ratio)
-  } else {
-    const ratio = (value - 40) / 60
-    return interpolateColor('#996971', '#1687d3', ratio)
-  }
-}
-
-const getGdBottomColor = (value: number) => {
-  if (value <= 40) {
-    const ratio = value / 40
-    return interpolateColor('#c7b5c0', '#ffe142', ratio)
-  } else {
-    const ratio = (value - 40) / 60
-    return interpolateColor('#ffe142', '#a2d0ee', ratio)
-  }
-}
-
+// バッテリーレベル
 const batteryLevel = computed(() => battery.level * 100)
 
-const baseColor = computed(() => getSkyColor(batteryLevel.value))
-const gdTopColor = computed(() => getGdTopColor(batteryLevel.value))
-const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
+// 空のベースカラー
+const baseColor = computed(() => getColor(batteryLevel.value, 40, '#30a4f2', '#ff974e', '#746c88'))
+// 空のグラデーションの上側
+const gdTopColor = computed(() => getColor(batteryLevel.value, 40, '#1687d3', '#996971', '#241b39'))
+// 空のグラデーションの下側
+const gdBottomColor = computed(() =>
+  getColor(batteryLevel.value, 40, '#a2d0ee', '#ffe142', '#c7b5c0')
+)
 </script>
 
 <template>
@@ -116,12 +110,12 @@ const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
           right: '10%'
         }"
       />
-      <div class="cloud cloud--1" :style="{ position: 'absolute', top: '5%', left: '6%' }">
+      <div class="cloud cloud--1">
         <img class="cloud__base" :src="Cloud1Base" alt="" />
         <img class="cloud__gd1" :src="Cloud1Gd1" alt="" />
         <img class="cloud__gd2" :src="Cloud1Gd2" alt="" />
       </div>
-      <div class="cloud cloud--2" :style="{ position: 'absolute', top: '24%', left: '25%' }">
+      <div class="cloud cloud--2">
         <img class="cloud__base" :src="Cloud2Base" alt="" />
         <img class="cloud__gd1" :src="Cloud2Gd1" alt="" />
         <img class="cloud__gd2" :src="Cloud2Gd2" alt="" />
@@ -245,11 +239,17 @@ const gdBottomColor = computed(() => getGdBottomColor(batteryLevel.value))
 .cloud--1 {
   width: 21%;
   animation: cloudAnime1 11s infinite;
+  position: absolute;
+  top: 5%;
+  left: 6%;
 }
 
 .cloud--2 {
   width: 10%;
   animation: cloudAnime2 11s infinite;
+  position: absolute;
+  top: 24%;
+  left: 25%;
 }
 
 .cloud__base,
